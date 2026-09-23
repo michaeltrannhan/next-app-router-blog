@@ -10,7 +10,9 @@ const title = "Next Dev Blog"
 const description =
   "A Next.js markdown blog for developers using the new App Router."
 export const metadata = {
-  metadataBase: process.env.NEXT_PUBLIC_SITE_URL,
+  metadataBase: process.env.NEXT_PUBLIC_SITE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+    : undefined,
   title: {
     default: title,
     template: `%s | ${title}`,
@@ -32,10 +34,6 @@ export const metadata = {
     },
   ],
   creator: "stevenspads",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -54,6 +52,13 @@ export const metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+}
+
+export const viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
 }
 
 interface RootLayoutProps {

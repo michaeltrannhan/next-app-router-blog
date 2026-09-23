@@ -14,12 +14,12 @@ import {
 } from "@/components/card"
 
 interface PostProps {
-  params: {
+  params: Promise<{
     category: string
-  }
+  }>
 }
 
-async function getPostsFromParams(params: PostProps["params"]) {
+async function getPostsFromParams(params: { category: string }) {
   const category = params?.category
   const posts = allPosts.filter(
     (post) => post.category.toLowerCase() === category.toLowerCase()
@@ -27,14 +27,14 @@ async function getPostsFromParams(params: PostProps["params"]) {
   return posts
 }
 
-export async function generateStaticParams(): Promise<PostProps["params"][]> {
+export async function generateStaticParams(): Promise<{ category: string }[]> {
   return allPosts.filter((post) => ({
     category: post.category,
   }))
 }
 
 export default async function CategoryPostsPage({ params }: PostProps) {
-  const posts = await getPostsFromParams(params)
+  const posts = await getPostsFromParams(await params)
 
   return (
     <div className="space-y-12">

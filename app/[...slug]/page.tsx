@@ -5,12 +5,12 @@ import { allPages } from "contentlayer/generated"
 import { Mdx } from "@/components/mdx-components"
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string[]
-  }
+  }>
 }
 
-async function getPageFromParams(params: PageProps["params"]) {
+async function getPageFromParams(params: { slug: string[] }) {
   const slug = params?.slug?.join("/")
   const page = allPages.find((page) => page.slugAsParams === slug)
 
@@ -24,7 +24,7 @@ async function getPageFromParams(params: PageProps["params"]) {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const page = await getPageFromParams(params)
+  const page = await getPageFromParams(await params)
 
   if (!page) {
     return {}
@@ -36,14 +36,14 @@ export async function generateMetadata({
   }
 }
 
-export async function generateStaticParams(): Promise<PageProps["params"][]> {
+export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   return allPages.map((page) => ({
     slug: page.slugAsParams.split("/"),
   }))
 }
 
 export default async function PagePage({ params }: PageProps) {
-  const page = await getPageFromParams(params)
+  const page = await getPageFromParams(await params)
 
   if (!page) {
     notFound()
