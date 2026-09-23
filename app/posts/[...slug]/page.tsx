@@ -9,12 +9,12 @@ import { Mdx } from "@/components/mdx-components"
 import { SharePost } from "@/components/share-post"
 
 interface PostProps {
-  params: {
+  params: Promise<{
     slug: string[]
-  }
+  }>
 }
 
-async function getPostFromParams(params: PostProps["params"]) {
+async function getPostFromParams(params: { slug: string[] }) {
   const slug = params?.slug?.join("/")
   const post = allPosts.find((post) => post.slugAsParams === slug)
 
@@ -28,7 +28,7 @@ async function getPostFromParams(params: PostProps["params"]) {
 export async function generateMetadata({
   params,
 }: PostProps): Promise<Metadata> {
-  const post = await getPostFromParams(params)
+  const post = await getPostFromParams(await params)
 
   if (!post) {
     return {}
@@ -40,14 +40,14 @@ export async function generateMetadata({
   }
 }
 
-export async function generateStaticParams(): Promise<PostProps["params"][]> {
+export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   return allPosts.map((post) => ({
     slug: post.slugAsParams.split("/"),
   }))
 }
 
 export default async function PostPage({ params }: PostProps) {
-  const post = await getPostFromParams(params)
+  const post = await getPostFromParams(await params)
 
   if (!post) {
     notFound()
